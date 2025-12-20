@@ -27,7 +27,15 @@ interface ConversationData {
   sessionScore?: number;
 }
 
-serve(async (req) => {
+interface RequestPayload {
+  method: string;
+  headers: {
+    get: (key: string) => string;
+  };
+  json: () => Promise<ConversationData>;
+}
+
+serve(async (req: RequestPayload) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });

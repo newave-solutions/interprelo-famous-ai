@@ -226,7 +226,7 @@ BEGIN
     NEW.updated_at = NOW();
     RETURN NEW;
 END;
-$$ language 'plpgsql';
+$$ LANGUAGE plpgsql;
 
 -- Triggers for updated_at
 CREATE TRIGGER update_user_profiles_updated_at BEFORE UPDATE ON user_profiles

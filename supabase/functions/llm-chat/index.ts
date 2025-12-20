@@ -36,12 +36,13 @@ serve(async (req) => {
 
   try {
     // Initialize Supabase client
+    const authHeader = req.headers.get('Authorization') ?? '';
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
       {
         global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
+          headers: { Authorization: authHeader },
         },
       }
     );
@@ -160,9 +161,10 @@ serve(async (req) => {
     const responseTime = Date.now() - startTime;
 
     // Log API usage to database (async, don't wait)
-    const costEstimate = calculateCost(provider, model, response.usage!);
-    
-    supabaseClient.from('api_usage_logs').insert({
+    if (response.usage) {
+      const costEstimate = calculateCost(provider, model, response.usage);
+      
+      supabaseClient.from('api_usage_logs').insert({
       user_id: user.id,
       provider,
       model,
@@ -170,10 +172,11 @@ serve(async (req) => {
       prompt_tokens: response.usage?.promptTokens,
       completion_tokens: response.usage?.completionTokens,
       total_tokens: response.usage?.totalTokens,
-      response_time_ms: responseTime,
-      status_code: apiResponse.status,
-      cost_estimate: costEstimate,
-    }).then(() => {}).catch(console.error);
+        response_time_ms: responseTime,
+        status_code: apiResponse.status,
+        cost_estimate: costEstimate,
+      }).then(() => {}).catch(console.error);
+    }
 
     // Return successful response
     return new Response(
