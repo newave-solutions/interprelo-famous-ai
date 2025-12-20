@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { TrendingUp, Clock, Flame, Trophy, Target, Calendar, LogIn } from 'lucide-react';
 import { userProgress as defaultProgress, badges as defaultBadges } from '../../data/appData';
 import ProgressRing from '../ui/ProgressRing';
-import BadgeComponent from '../ui/Badge';
+import { Badge as BadgeComponent } from '../ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 

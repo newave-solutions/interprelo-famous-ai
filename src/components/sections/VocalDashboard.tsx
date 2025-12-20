@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Mic, MicOff, Play, Pause, RotateCcw, Volume2, Gauge, Music } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Mic, MicOff, Play, Pause, RotateCcw, Volume2, Gauge, Music, Download, AlertCircle } from 'lucide-react';
 import VocalMeter from '../ui/VocalMeter';
 import WaveformVisualizer from '../ui/WaveformVisualizer';
 import ProgressRing from '../ui/ProgressRing';
+import { AudioAnalyzer, AudioRecorder, AudioAnalysisData } from '@/lib/audioAnalysis';
 
 interface VocalDashboardProps {
   scenario?: {
@@ -17,32 +18,163 @@ const VocalDashboard: React.FC<VocalDashboardProps> = ({ scenario, onClose }) =>
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [pitch, setPitch] = useState(50);
-  const [pace, setPace] = useState(55);
-  const [volume, setVolume] = useState(48);
+  const [pace, setPace] = useState(0);
+  const [volume, setVolume] = useState(0);
   const [overallScore, setOverallScore] = useState(0);
   const [sessionTime, setSessionTime] = useState(0);
+  const [waveformData, setWaveformData] = useState<Uint8Array | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
+  const [isInitializing, setIsInitializing] = useState(false);
+  
+  const audioAnalyzerRef = useRef<AudioAnalyzer | null>(null);
+  const audioRecorderRef = useRef<AudioRecorder | null>(null);
+  const sessionTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
-  // Simulate real-time vocal analysis
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (audioAnalyzerRef.current) {
+        audioAnalyzerRef.current.cleanup();
+      }
+      if (sessionTimerRef.current) {
+        clearInterval(sessionTimerRef.current);
+      }
+    };
+  }, []);
+
+  // Update session time
   useEffect(() => {
     if (isRecording && !isPaused) {
-      const interval = setInterval(() => {
-        setPitch(prev => Math.max(20, Math.min(80, prev + (Math.random() - 0.5) * 10)));
-        setPace(prev => Math.max(25, Math.min(75, prev + (Math.random() - 0.5) * 8)));
-        setVolume(prev => Math.max(30, Math.min(70, prev + (Math.random() - 0.5) * 6)));
+      sessionTimerRef.current = setInterval(() => {
         setSessionTime(prev => prev + 1);
-      }, 500);
-
-      return () => clearInterval(interval);
+      }, 1000);
+    } else {
+      if (sessionTimerRef.current) {
+        clearInterval(sessionTimerRef.current);
+      }
     }
+
+    return () => {
+      if (sessionTimerRef.current) {
+        clearInterval(sessionTimerRef.current);
+      }
+    };
   }, [isRecording, isPaused]);
 
   // Calculate overall score
   useEffect(() => {
-    const pitchScore = pitch >= 40 && pitch <= 60 ? 100 : Math.max(0, 100 - Math.abs(50 - pitch) * 2);
-    const paceScore = pace >= 40 && pace <= 60 ? 100 : Math.max(0, 100 - Math.abs(50 - pace) * 2);
-    const volumeScore = volume >= 40 && volume <= 60 ? 100 : Math.max(0, 100 - Math.abs(50 - volume) * 2);
+    if (!isRecording) return;
+
+    // Pitch scoring (40-60 is optimal, converted from 0-100 scale)
+    const pitchScore = pitch >= 35 && pitch <= 65 ? 100 : Math.max(0, 100 - Math.abs(50 - pitch) * 1.5);
+    
+    // Volume scoring (30-70 is optimal for speaking)
+    const volumeScore = volume >= 30 && volume <= 70 ? 100 : Math.max(0, 100 - Math.abs(50 - volume) * 1.2);
+    
+    // Pace scoring (120-160 WPM is optimal for clear speech)
+    const paceDiff = pace < 120 ? (120 - pace) : pace > 160 ? (pace - 160) : 0;
+    const paceScore = Math.max(0, 100 - paceDiff * 0.8);
+    
     setOverallScore(Math.round((pitchScore + paceScore + volumeScore) / 3));
-  }, [pitch, pace, volume]);
+  }, [pitch, pace, volume, isRecording]);
+
+  const handleStartRecording = async () => {
+    setError(null);
+    setIsInitializing(true);
+
+    try {
+      // Request microphone access
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        } 
+      });
+      
+      streamRef.current = stream;
+
+      // Initialize audio analyzer
+      const analyzer = new AudioAnalyzer();
+      await analyzer.initialize();
+      audioAnalyzerRef.current = analyzer;
+
+      // Initialize audio recorder
+      const recorder = new AudioRecorder();
+      await recorder.startRecording(stream);
+      audioRecorderRef.current = recorder;
+
+      // Start analysis
+      analyzer.startAnalysis((data: AudioAnalysisData) => {
+        setPitch(data.pitch);
+        setVolume(data.volume);
+        
+        // Get waveform data for visualization
+        const waveform = analyzer.getWaveformData();
+        setWaveformData(waveform);
+        
+        // Get speech analysis for WPM
+        const speechData = analyzer.getSpeechAnalysis();
+        setPace(speechData.wordsPerMinute);
+      });
+
+      setIsRecording(true);
+      setIsInitializing(false);
+    } catch (err) {
+      console.error('Error starting recording:', err);
+      setError('Failed to access microphone. Please ensure microphone permissions are granted.');
+      setIsInitializing(false);
+    }
+  };
+
+  const handleStopRecording = async () => {
+    if (audioAnalyzerRef.current) {
+      audioAnalyzerRef.current.stopAnalysis();
+      audioAnalyzerRef.current.cleanup();
+      audioAnalyzerRef.current = null;
+    }
+
+    if (audioRecorderRef.current) {
+      try {
+        const blob = await audioRecorderRef.current.stopRecording();
+        setRecordedBlob(blob);
+      } catch (err) {
+        console.error('Error stopping recording:', err);
+      }
+      audioRecorderRef.current = null;
+    }
+
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+
+    setIsRecording(false);
+    setIsPaused(false);
+  };
+
+  const handlePauseResume = () => {
+    if (!audioAnalyzerRef.current || !audioRecorderRef.current) return;
+
+    if (isPaused) {
+      audioAnalyzerRef.current.startAnalysis((data: AudioAnalysisData) => {
+        setPitch(data.pitch);
+        setVolume(data.volume);
+        const waveform = audioAnalyzerRef.current?.getWaveformData();
+        setWaveformData(waveform || null);
+        const speechData = audioAnalyzerRef.current?.getSpeechAnalysis();
+        setPace(speechData?.wordsPerMinute || 0);
+      });
+      audioRecorderRef.current.resumeRecording();
+    } else {
+      audioAnalyzerRef.current.stopAnalysis();
+      audioRecorderRef.current.pauseRecording();
+    }
+
+    setIsPaused(!isPaused);
+  };
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -51,12 +183,36 @@ const VocalDashboard: React.FC<VocalDashboardProps> = ({ scenario, onClose }) =>
   };
 
   const handleReset = () => {
-    setIsRecording(false);
-    setIsPaused(false);
+    handleStopRecording();
     setPitch(50);
-    setPace(55);
-    setVolume(48);
+    setPace(0);
+    setVolume(0);
     setSessionTime(0);
+    setOverallScore(0);
+    setRecordedBlob(null);
+    setError(null);
+    setWaveformData(null);
+  };
+
+  const handleDownloadRecording = () => {
+    if (!recordedBlob) return;
+
+    const url = URL.createObjectURL(recordedBlob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `vocal-practice-${new Date().toISOString()}.webm`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handlePlayRecording = () => {
+    if (!recordedBlob) return;
+
+    const url = URL.createObjectURL(recordedBlob);
+    const audio = new Audio(url);
+    audio.play();
   };
 
   return (
@@ -86,6 +242,17 @@ const VocalDashboard: React.FC<VocalDashboardProps> = ({ scenario, onClose }) =>
         </div>
       </div>
 
+      {/* Error Message */}
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-medium text-red-800">Microphone Error</p>
+            <p className="text-sm text-red-600">{error}</p>
+          </div>
+        </div>
+      )}
+
       {/* Current Prompt */}
       {scenario && (
         <div className="bg-white rounded-xl p-4 mb-6 border-l-4 border-[#2C5F8D]">
@@ -114,6 +281,7 @@ const VocalDashboard: React.FC<VocalDashboardProps> = ({ scenario, onClose }) =>
           height={80}
           barCount={60}
           color={isRecording && !isPaused ? '#2C5F8D' : '#CBD5E1'}
+          waveformData={waveformData}
         />
       </div>
 
@@ -122,28 +290,47 @@ const VocalDashboard: React.FC<VocalDashboardProps> = ({ scenario, onClose }) =>
         <VocalMeter
           label="Pitch"
           value={pitch}
-          targetMin={40}
-          targetMax={60}
+          targetMin={35}
+          targetMax={65}
           color="#2C5F8D"
           icon={<Music className="w-4 h-4 text-[#2C5F8D]" />}
         />
         <VocalMeter
-          label="Pace"
-          value={pace}
-          targetMin={40}
-          targetMax={60}
+          label="Pace (WPM)"
+          value={Math.min(100, (pace / 200) * 100)}
+          targetMin={60}
+          targetMax={80}
+          unit=""
           color="#4CAF50"
           icon={<Gauge className="w-4 h-4 text-[#4CAF50]" />}
         />
         <VocalMeter
           label="Volume"
           value={volume}
-          targetMin={40}
-          targetMax={60}
+          targetMin={30}
+          targetMax={70}
           color="#FF6B6B"
           icon={<Volume2 className="w-4 h-4 text-[#FF6B6B]" />}
         />
       </div>
+
+      {/* WPM Display */}
+      {isRecording && pace > 0 && (
+        <div className="bg-blue-50 rounded-xl p-4 mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Speaking Rate</p>
+              <p className="text-2xl font-bold text-[#2C5F8D]">{pace} <span className="text-lg">WPM</span></p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-gray-500">Target: 120-160 WPM</p>
+              <p className={`text-sm font-semibold ${pace >= 120 && pace <= 160 ? 'text-green-600' : 'text-amber-600'}`}>
+                {pace < 120 ? 'Speak faster' : pace > 160 ? 'Slow down' : 'Perfect pace!'}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Overall Score & Controls */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-6 bg-white rounded-xl p-6">
@@ -166,24 +353,44 @@ const VocalDashboard: React.FC<VocalDashboardProps> = ({ scenario, onClose }) =>
             <p className={`text-lg font-semibold ${
               overallScore >= 80 ? 'text-green-600' : overallScore >= 60 ? 'text-amber-600' : 'text-red-600'
             }`}>
-              {overallScore >= 80 ? 'Excellent!' : overallScore >= 60 ? 'Good Progress' : 'Keep Practicing'}
+              {overallScore >= 80 ? 'Excellent!' : overallScore >= 60 ? 'Good Progress' : isRecording ? 'Keep Practicing' : 'Start Recording'}
             </p>
           </div>
         </div>
 
         {/* Control Buttons */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
+          {recordedBlob && (
+            <>
+              <button
+                onClick={handlePlayRecording}
+                className="p-3 bg-blue-100 text-blue-600 rounded-xl hover:bg-blue-200 transition-colors"
+                title="Play Recording"
+              >
+                <Play className="w-5 h-5" />
+              </button>
+              <button
+                onClick={handleDownloadRecording}
+                className="p-3 bg-green-100 text-green-600 rounded-xl hover:bg-green-200 transition-colors"
+                title="Download Recording"
+              >
+                <Download className="w-5 h-5" />
+              </button>
+            </>
+          )}
+          
           <button
             onClick={handleReset}
             className="p-3 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors"
             title="Reset"
+            disabled={isInitializing}
           >
             <RotateCcw className="w-5 h-5" />
           </button>
           
           {isRecording && (
             <button
-              onClick={() => setIsPaused(!isPaused)}
+              onClick={handlePauseResume}
               className="p-3 bg-amber-100 text-amber-600 rounded-xl hover:bg-amber-200 transition-colors"
               title={isPaused ? 'Resume' : 'Pause'}
             >
@@ -192,14 +399,20 @@ const VocalDashboard: React.FC<VocalDashboardProps> = ({ scenario, onClose }) =>
           )}
           
           <button
-            onClick={() => setIsRecording(!isRecording)}
+            onClick={isRecording ? handleStopRecording : handleStartRecording}
+            disabled={isInitializing}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
               isRecording
                 ? 'bg-red-500 text-white hover:bg-red-600'
                 : 'bg-[#2C5F8D] text-white hover:bg-[#234B73]'
-            }`}
+            } ${isInitializing ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            {isRecording ? (
+            {isInitializing ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Initializing...
+              </>
+            ) : isRecording ? (
               <>
                 <MicOff className="w-5 h-5" />
                 Stop Recording
@@ -217,8 +430,8 @@ const VocalDashboard: React.FC<VocalDashboardProps> = ({ scenario, onClose }) =>
       {/* Tips */}
       <div className="mt-4 p-4 bg-blue-50 rounded-xl">
         <p className="text-sm text-[#2C5F8D]">
-          <strong>Tip:</strong> Keep the indicators within the green target zone for optimal tone. 
-          If your pace increases, take a breath and slow down deliberately.
+          <strong>Tip:</strong> Speak clearly and naturally. Target 120-160 words per minute for optimal clarity. 
+          Your microphone will capture pitch, volume, and speaking pace in real-time.
         </p>
       </div>
     </div>
