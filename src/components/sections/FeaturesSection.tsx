@@ -49,10 +49,10 @@ const stats = [
 
 const FeaturesSection: React.FC = () => {
   return (
-    <section className="py-20 bg-white">
+    <section className="py-12 sm:py-16 lg:py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 sm:mb-12 lg:mb-16">
           <span className="inline-block px-4 py-1 bg-[#2C5F8D]/10 text-[#2C5F8D] rounded-full text-sm font-medium mb-4">
             Why VoiceCoach Pro
           </span>
@@ -124,4 +124,6 @@ const FeaturesSection: React.FC = () => {
   );
 };
 
-export default FeaturesSection;
+// ⚡ Performance: Memoized to prevent re-renders (no props, static content)
+// This component renders static feature cards and never needs to re-render
+export default React.memo(FeaturesSection);

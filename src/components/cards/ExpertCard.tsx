@@ -23,11 +23,11 @@ const ExpertCard: React.FC<ExpertCardProps> = ({ expert, onPlayRecording }) => {
       </div>
 
       {/* Content */}
-      <div className="pt-12 p-4">
-        <h3 className="font-semibold text-gray-800">{name}</h3>
-        <p className="text-sm text-gray-500">{title}</p>
+      <div className="pt-12 px-3 sm:px-4 pb-3 sm:pb-4">
+        <h3 className="text-sm sm:text-base font-semibold text-gray-800">{name}</h3>
+        <p className="text-xs sm:text-sm text-gray-500">{title}</p>
         
-        <div className="flex items-center gap-4 mt-3 text-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-3 text-xs sm:text-sm">
           <div className="flex items-center gap-1 text-[#2C5F8D]">
             <Award className="w-4 h-4" />
             <span>{specialization}</span>
@@ -39,20 +39,20 @@ const ExpertCard: React.FC<ExpertCardProps> = ({ expert, onPlayRecording }) => {
         </div>
 
         {/* Recordings */}
-        <div className="mt-4 space-y-2">
-          <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Recordings</p>
+        <div className="mt-3 sm:mt-4 space-y-1.5 sm:space-y-2">
+          <p className="text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-wide">Recordings</p>
           {recordings.map((recording) => (
             <button
               key={recording.id}
               onClick={() => onPlayRecording(expert, recording.id)}
-              className="w-full flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-[#2C5F8D]/10 transition-colors group"
+              className="w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-50 rounded-lg hover:bg-[#2C5F8D]/10 transition-colors group"
             >
-              <div className="w-8 h-8 rounded-full bg-[#2C5F8D] flex items-center justify-center group-hover:bg-[#2C5F8D]/80 transition-colors">
-                <Play className="w-4 h-4 text-white ml-0.5" />
+              <div className="w-7 sm:w-8 h-7 sm:h-8 flex-shrink-0 rounded-full bg-[#2C5F8D] flex items-center justify-center group-hover:bg-[#2C5F8D]/80 transition-colors">
+                <Play className="w-3 sm:w-4 h-3 sm:h-4 text-white ml-0.5" />
               </div>
-              <div className="flex-1 text-left">
-                <p className="text-sm font-medium text-gray-700">{recording.title}</p>
-                <p className="text-xs text-gray-400">{recording.scenario} • {recording.duration}</p>
+              <div className="flex-1 text-left min-w-0">
+                <p className="text-xs sm:text-sm font-medium text-gray-700 truncate">{recording.title}</p>
+                <p className="text-[10px] sm:text-xs text-gray-400 truncate">{recording.scenario} • {recording.duration}</p>
               </div>
             </button>
           ))}

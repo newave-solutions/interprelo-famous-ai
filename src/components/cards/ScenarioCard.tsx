@@ -56,15 +56,15 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario, onClick }) => {
       </div>
 
       {/* Content */}
-      <div className="p-4">
+      <div className="p-3 sm:p-4">
         <div className="flex items-start justify-between gap-2 mb-2">
-          <h3 className="font-semibold text-gray-800 line-clamp-1">{title}</h3>
-          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${difficultyColors[difficulty]}`}>
+          <h3 className="text-sm sm:text-base font-semibold text-gray-800 line-clamp-1">{title}</h3>
+          <span className={`px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium flex-shrink-0 ${difficultyColors[difficulty]}`}>
             {difficulty}
           </span>
         </div>
         
-        <p className="text-sm text-gray-500 line-clamp-2 mb-3">{description}</p>
+        <p className="text-xs sm:text-sm text-gray-500 line-clamp-2 mb-2 sm:mb-3">{description}</p>
         
         {unlocked ? (
           <div className="flex items-center justify-between">

@@ -1,4 +1,5 @@
 // LLM Service for AI-powered role-playing scenarios
+import EdgeFunctionClient from './edgeFunctions';
 
 export interface LLMMessage {
   role: 'system' | 'user' | 'assistant';
@@ -37,15 +38,18 @@ export class LLMService {
   private apiEndpoint: string;
   private model: string;
   private provider: 'openai' | 'anthropic' | 'custom';
+  private useEdgeFunction: boolean;
 
   constructor(config: {
     apiKey: string;
     provider?: 'openai' | 'anthropic' | 'custom';
     apiEndpoint?: string;
     model?: string;
+    useEdgeFunction?: boolean;
   }) {
     this.apiKey = config.apiKey;
     this.provider = config.provider || 'openai';
+    this.useEdgeFunction = config.useEdgeFunction ?? false;
     
     // Set defaults based on provider
     if (this.provider === 'openai') {
@@ -170,6 +174,27 @@ Remember: You are NOT the interpreter. You are the ${context.currentRole} speaki
   }
 
   private async callLLMAPI(messages: LLMMessage[]): Promise<string> {
+    // Use edge function if enabled and available
+    if (this.useEdgeFunction) {
+      try {
+        const isAvailable = await EdgeFunctionClient.isAvailable();
+        if (isAvailable) {
+          const response = await EdgeFunctionClient.llmChat({
+            provider: this.provider as 'openai' | 'anthropic',
+            model: this.model,
+            messages,
+            temperature: 0.8,
+            maxTokens: 200,
+            apiKey: this.apiKey,
+          });
+          return response.content;
+        }
+      } catch (error) {
+        console.warn('Edge function unavailable, falling back to direct API:', error);
+      }
+    }
+
+    // Fallback to direct API calls
     if (this.provider === 'openai') {
       return this.callOpenAI(messages);
     } else if (this.provider === 'anthropic') {

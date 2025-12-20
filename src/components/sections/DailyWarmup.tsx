@@ -128,16 +128,15 @@ const DailyWarmup: React.FC = () => {
 
   if (showCompletion) {
     return (
-      <div className="bg-gradient-to-br from-[#4CAF50]/10 to-[#2C5F8D]/10 rounded-2xl p-8 text-center">
-        <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
-          <Check className="w-10 h-10 text-green-600" />
+      <div className="bg-gradient-to-br from-[#4CAF50]/10 to-[#2C5F8D]/10 rounded-2xl p-4 sm:p-6 lg:p-8 text-center">
+        <div className="w-16 sm:w-20 h-16 sm:h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4 sm:mb-6">
+          <Check className="w-8 sm:w-10 h-8 sm:h-10 text-green-600" />
         </div>
-        <h3 className="text-2xl font-bold text-gray-800 mb-2">Warm-up Complete!</h3>
-        <p className="text-gray-600 mb-6">
+        <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Warm-up Complete!</h3>
+        <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 px-2">
           Great job! You've completed your daily vocal warm-up. You're ready to practice!
         </p>
-        <div className="flex items-center justify-center gap-4">
-          <button
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">\n          <button
             onClick={handleReset}
             className="flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
           >
@@ -155,17 +154,17 @@ const DailyWarmup: React.FC = () => {
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-6 text-white">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Sun className="w-5 h-5" />
-              <span className="text-sm font-medium text-white/80">Daily Warm-up</span>
+      <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-4 sm:p-6 text-white">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 mb-1 sm:mb-2">
+              <Sun className="w-4 sm:w-5 h-4 sm:h-5 flex-shrink-0" />
+              <span className="text-xs sm:text-sm font-medium text-white/80">Daily Warm-up</span>
             </div>
-            <h3 className="text-xl font-bold">5-Minute Vocal Preparation</h3>
+            <h3 className="text-base sm:text-xl font-bold truncate">5-Minute Vocal Preparation</h3>
           </div>
-          <ProgressRing progress={overallProgress} size={70} strokeWidth={6} color="#fff">
-            <span className="text-sm font-bold">{Math.round(overallProgress)}%</span>
+          <ProgressRing progress={overallProgress} size={60} strokeWidth={5} color="#fff">
+            <span className="text-xs sm:text-sm font-bold">{Math.round(overallProgress)}%</span>
           </ProgressRing>
         </div>
       </div>
@@ -288,4 +287,6 @@ const DailyWarmup: React.FC = () => {
   );
 };
 
-export default DailyWarmup;
+// ⚡ Performance: Memoized to prevent re-renders when parent state changes
+// This component is always mounted in the dashboard section
+export default React.memo(DailyWarmup);

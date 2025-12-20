@@ -76,26 +76,26 @@ const ToneShiftDrills: React.FC = () => {
     : 0;
 
   return (
-    <section className="py-16 bg-gradient-to-br from-[#2C5F8D]/5 to-[#4CAF50]/5">
+    <section className="py-12 sm:py-16 bg-gradient-to-br from-[#2C5F8D]/5 to-[#4CAF50]/5">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <span className="inline-block px-4 py-1 bg-[#4CAF50]/10 text-[#4CAF50] rounded-full text-sm font-medium mb-4">
+        <div className="text-center mb-8 sm:mb-12">
+          <span className="inline-block px-3 sm:px-4 py-1 bg-[#4CAF50]/10 text-[#4CAF50] rounded-full text-xs sm:text-sm font-medium mb-3 sm:mb-4">
             Daily Practice
           </span>
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">Tone Shift Drills</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3 sm:mb-4">Tone Shift Drills</h2>
+          <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto px-2">
             Master vocal modulation by delivering the same phrase with different emotional tones. 
             This exercise builds your ability to adapt quickly in real interpreting situations.
           </p>
         </div>
 
         {/* Progress Indicator */}
-        <div className="flex items-center justify-center gap-2 mb-8">
+        <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-6 sm:mb-8">
           {toneDrills.map((_, index) => (
             <div
               key={index}
-              className={`w-3 h-3 rounded-full transition-colors ${
+              className={`w-2.5 sm:w-3 h-2.5 sm:h-3 rounded-full transition-colors ${
                 index === currentDrillIndex
                   ? 'bg-[#2C5F8D]'
                   : index < currentDrillIndex
@@ -111,10 +111,10 @@ const ToneShiftDrills: React.FC = () => {
           {!showResults ? (
             <>
               {/* Phrase Display */}
-              <div className="p-8 bg-gradient-to-r from-[#2C5F8D] to-[#4A90C2] text-white">
-                <p className="text-sm text-white/70 mb-2">Drill {currentDrillIndex + 1} of {toneDrills.length}</p>
-                <h3 className="text-xl font-semibold mb-4">"{currentDrill.phrase}"</h3>
-                <p className="text-sm text-white/80">{currentDrill.context}</p>
+              <div className="p-4 sm:p-6 lg:p-8 bg-gradient-to-r from-[#2C5F8D] to-[#4A90C2] text-white">
+                <p className="text-xs sm:text-sm text-white/70 mb-1 sm:mb-2">Drill {currentDrillIndex + 1} of {toneDrills.length}</p>
+                <h3 className="text-base sm:text-xl font-semibold mb-2 sm:mb-4">&quot;{currentDrill.phrase}&quot;</h3>
+                <p className="text-xs sm:text-sm text-white/80">{currentDrill.context}</p>
               </div>
 
               {/* Tone Progress */}
@@ -293,4 +293,6 @@ const ToneShiftDrills: React.FC = () => {
   );
 };
 
-export default ToneShiftDrills;
+// ⚡ Performance: Memoized to prevent re-renders when parent state changes
+// This component has interactive drills with audio visualization and scoring
+export default React.memo(ToneShiftDrills);

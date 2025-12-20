@@ -25,11 +25,11 @@ const ScenarioLibrary: React.FC<ScenarioLibraryProps> = ({ onSelectScenario }) =
   });
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-12 sm:py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">Practice Scenarios</h2>
+        <div className="text-center mb-8 sm:mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3 sm:mb-4">Practice Scenarios</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Choose from our library of realistic medical scenarios. Each scenario is designed 
             to challenge and improve specific aspects of your vocal delivery.
@@ -37,27 +37,27 @@ const ScenarioLibrary: React.FC<ScenarioLibraryProps> = ({ onSelectScenario }) =
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-2xl shadow-sm p-4 mb-8">
-          <div className="flex flex-col lg:flex-row gap-4">
+        <div className="bg-white rounded-2xl shadow-sm p-3 sm:p-4 mb-6 sm:mb-8">
+          <div className="flex flex-col gap-3 sm:gap-4">
             {/* Search */}
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 sm:w-5 h-4 sm:h-5 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search scenarios..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2C5F8D]/20 focus:border-[#2C5F8D]"
+                className="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2.5 sm:py-3 text-sm sm:text-base bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2C5F8D]/20 focus:border-[#2C5F8D]"
               />
             </div>
 
-            {/* Category Filter */}
-            <div className="flex items-center gap-2">
-              <Filter className="w-5 h-5 text-gray-400" />
+            {/* Category & Difficulty Filters */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Filter className="w-4 sm:w-5 h-4 sm:h-5 text-gray-400 flex-shrink-0" />
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2C5F8D]/20 focus:border-[#2C5F8D]"
+                className="flex-1 sm:flex-none px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2C5F8D]/20 focus:border-[#2C5F8D]"
               >
                 {categories.map(cat => (
                   <option key={cat} value={cat}>{cat}</option>
@@ -69,7 +69,7 @@ const ScenarioLibrary: React.FC<ScenarioLibraryProps> = ({ onSelectScenario }) =
             <select
               value={selectedDifficulty}
               onChange={(e) => setSelectedDifficulty(e.target.value)}
-              className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2C5F8D]/20 focus:border-[#2C5F8D]"
+              className="flex-1 sm:flex-none px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2C5F8D]/20 focus:border-[#2C5F8D]"
             >
               {difficulties.map(diff => (
                 <option key={diff} value={diff}>{diff}</option>
@@ -172,4 +172,6 @@ const ScenarioLibrary: React.FC<ScenarioLibraryProps> = ({ onSelectScenario }) =
   );
 };
 
-export default ScenarioLibrary;
+// ⚡ Performance: Memoized to prevent re-renders when parent state changes
+// This component renders a large filterable list of scenario cards
+export default React.memo(ScenarioLibrary);

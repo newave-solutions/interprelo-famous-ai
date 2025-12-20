@@ -275,9 +275,9 @@ const AIScenarioPractice: React.FC<AIScenarioPracticeProps> = ({
   return (
     <div className="flex flex-col h-full bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+      <div className="bg-white border-b border-gray-200 p-3 sm:p-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <div className="p-2 bg-gradient-to-br from-[#2C5F8D] to-[#1e4a6b] rounded-lg">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
@@ -313,6 +313,7 @@ const AIScenarioPractice: React.FC<AIScenarioPracticeProps> = ({
                 size="sm"
                 onClick={handleReset}
                 disabled={isProcessing}
+                aria-label="Reset scenario"
               >
                 <RotateCcw className="w-4 h-4" />
               </Button>
@@ -501,6 +502,7 @@ const AIScenarioPractice: React.FC<AIScenarioPracticeProps> = ({
             variant={isListening ? 'destructive' : 'outline'}
             disabled={isProcessing || isSpeaking}
             className="h-12 w-12"
+            aria-label={isListening ? 'Stop voice input' : 'Start voice input'}
           >
             {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
           </Button>
@@ -509,6 +511,7 @@ const AIScenarioPractice: React.FC<AIScenarioPracticeProps> = ({
             onClick={handleSendMessage}
             disabled={!inputText.trim() || isProcessing || isListening}
             className="h-12 px-6 bg-[#2C5F8D] hover:bg-[#234B73]"
+            aria-label={isProcessing ? 'Sending message...' : 'Send message'}
           >
             {isProcessing ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />

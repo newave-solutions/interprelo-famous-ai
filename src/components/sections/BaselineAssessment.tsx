@@ -61,10 +61,10 @@ const BaselineAssessment: React.FC<BaselineAssessmentProps> = ({ onComplete, onC
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-100 p-6 flex items-center justify-between">
+        <div className="sticky top-0 bg-white border-b border-gray-100 p-4 sm:p-6 flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-gray-800">Vocal Baseline Assessment</h2>
-            <p className="text-sm text-gray-500">Establish your natural vocal profile</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Baseline Assessment</h2>
+            <p className="text-xs sm:text-sm text-gray-500 mt-1">Establish your natural vocal profile</p>
           </div>
           <button
             onClick={onClose}

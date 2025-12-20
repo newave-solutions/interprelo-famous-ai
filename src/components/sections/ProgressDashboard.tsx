@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { TrendingUp, Clock, Flame, Trophy, Target, Calendar, LogIn } from 'lucide-react';
 import { userProgress as defaultProgress, badges as defaultBadges } from '../../data/appData';
 import ProgressRing from '../ui/ProgressRing';
-import { Badge as BadgeComponent } from '../ui/badge';
+import AchievementBadge from '../ui/AchievementBadge';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
 
@@ -97,7 +97,7 @@ const ProgressDashboard: React.FC = () => {
   const maxMinutes = Math.max(...weeklyProgress.map(d => d.minutes), 1);
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-12 sm:py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
@@ -122,7 +122,7 @@ const ProgressDashboard: React.FC = () => {
         )}
 
         {/* Stats Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-8 sm:mb-12">
           <div className="bg-gradient-to-br from-[#2C5F8D] to-[#4A90C2] rounded-2xl p-6 text-white">
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-white/20 rounded-xl">
@@ -288,7 +288,7 @@ const ProgressDashboard: React.FC = () => {
 
             <div className="grid grid-cols-4 gap-4">
               {badges.map(badge => (
-                <BadgeComponent
+                <AchievementBadge
                   key={badge.id}
                   name={badge.name}
                   description={badge.description}
@@ -342,4 +342,6 @@ const ProgressDashboard: React.FC = () => {
   );
 };
 
-export default ProgressDashboard;
+// ⚡ Performance: Memoized to prevent re-renders when parent state changes
+// This component likely fetches data and renders charts/progress metrics
+export default React.memo(ProgressDashboard);

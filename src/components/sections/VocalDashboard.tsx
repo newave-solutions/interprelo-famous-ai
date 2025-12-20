@@ -216,18 +216,18 @@ const VocalDashboard: React.FC<VocalDashboardProps> = ({ scenario, onClose }) =>
   };
 
   return (
-    <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 shadow-lg">
+    <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-4 sm:p-6 shadow-lg">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h2 className="text-xl font-bold text-gray-800">Vocal Dashboard</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-gray-800">Vocal Dashboard</h2>
           {scenario && (
-            <p className="text-sm text-gray-500">{scenario.title}</p>
+            <p className="text-xs sm:text-sm text-gray-500">{scenario.title}</p>
           )}
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
           <div className="text-right">
-            <p className="text-sm text-gray-500">Session Time</p>
+            <p className="text-xs sm:text-sm text-gray-500">Session Time</p>
             <p className="text-2xl font-mono font-bold text-[#2C5F8D]">{formatTime(sessionTime)}</p>
           </div>
           {onClose && (
@@ -286,7 +286,7 @@ const VocalDashboard: React.FC<VocalDashboardProps> = ({ scenario, onClose }) =>
       </div>
 
       {/* Vocal Meters */}
-      <div className="grid md:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-6">
         <VocalMeter
           label="Pitch"
           value={pitch}
@@ -333,13 +333,13 @@ const VocalDashboard: React.FC<VocalDashboardProps> = ({ scenario, onClose }) =>
       )}
 
       {/* Overall Score & Controls */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-6 bg-white rounded-xl p-6">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 bg-white rounded-xl p-4 sm:p-6">
         {/* Score Ring */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4 sm:gap-6">
           <ProgressRing
             progress={overallScore}
-            size={100}
-            strokeWidth={8}
+            size={80}
+            strokeWidth={6}
             color={overallScore >= 80 ? '#4CAF50' : overallScore >= 60 ? '#FFA726' : '#FF6B6B'}
           >
             <div className="text-center">
@@ -359,7 +359,7 @@ const VocalDashboard: React.FC<VocalDashboardProps> = ({ scenario, onClose }) =>
         </div>
 
         {/* Control Buttons */}
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
           {recordedBlob && (
             <>
               <button
@@ -438,4 +438,6 @@ const VocalDashboard: React.FC<VocalDashboardProps> = ({ scenario, onClose }) =>
   );
 };
 
-export default VocalDashboard;
+// ⚡ Performance: Memoized to prevent re-renders when parent AppLayout state changes
+// This component has expensive audio processing, multiple state hooks, and effects
+export default React.memo(VocalDashboard);

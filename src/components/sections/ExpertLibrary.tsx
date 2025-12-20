@@ -44,10 +44,10 @@ const ExpertLibrary: React.FC = () => {
   }, [isPlaying, selectedRecording]);
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-12 sm:py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8 sm:mb-12">
           <span className="inline-block px-4 py-1 bg-[#2C5F8D]/10 text-[#2C5F8D] rounded-full text-sm font-medium mb-4">
             Learn from the Best
           </span>
@@ -59,7 +59,7 @@ const ExpertLibrary: React.FC = () => {
         </div>
 
         {/* Expert Cards Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {experts.map(expert => (
             <ExpertCard
               key={expert.id}
@@ -158,4 +158,6 @@ const ExpertLibrary: React.FC = () => {
   );
 };
 
-export default ExpertLibrary;
+// ⚡ Performance: Memoized to prevent re-renders when parent state changes
+// This component renders expert cards with media player and audio visualization
+export default React.memo(ExpertLibrary);

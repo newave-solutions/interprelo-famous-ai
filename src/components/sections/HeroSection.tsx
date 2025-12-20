@@ -24,49 +24,49 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onStartPractice, onTakeBaseli
         <WaveformVisualizer height={200} barCount={80} color="#4A90C2" />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 lg:pt-20 pb-16 sm:pb-24 lg:pb-32">
+        <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
           {/* Left Content */}
-          <div className="text-white space-y-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
+          <div className="text-white space-y-6 sm:space-y-8">
+            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
               <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              <span className="text-sm text-white/80">AI-Powered Voice Training</span>
+              <span className="text-xs sm:text-sm text-white/80">AI-Powered Voice Training</span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
               Master Your Voice.
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#4A90C2] to-[#6BB5E0]">
                 Transform Your Impact.
               </span>
             </h1>
 
-            <p className="text-lg text-white/70 max-w-xl">
+            <p className="text-base sm:text-lg text-white/70 max-w-xl">
               The professional voice coaching platform for medical interpreters. 
               Get real-time AI feedback, practice with realistic scenarios, and 
               develop the calm, authoritative tone that saves lives.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <button
                 onClick={onStartPractice}
-                className="group flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-[#4CAF50] to-[#45A049] text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-green-500/30 transition-all duration-300"
+                className="group flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-[#4CAF50] to-[#45A049] text-white text-sm sm:text-base font-semibold rounded-xl hover:shadow-lg hover:shadow-green-500/30 transition-all duration-300"
               >
-                <Play className="w-5 h-5" />
+                <Play className="w-4 sm:w-5 h-4 sm:h-5" />
                 Start Practice Session
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5 group-hover:translate-x-1 transition-transform" />
               </button>
               
               <button
                 onClick={onTakeBaseline}
-                className="flex items-center justify-center gap-2 px-8 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-xl border border-white/20 hover:bg-white/20 transition-all duration-300"
+                className="flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-white/10 backdrop-blur-sm text-white text-sm sm:text-base font-semibold rounded-xl border border-white/20 hover:bg-white/20 transition-all duration-300"
               >
-                <Mic className="w-5 h-5" />
+                <Mic className="w-4 sm:w-5 h-4 sm:h-5" />
                 Take Baseline Test
               </button>
             </div>
 
             {/* Stats */}
-            <div className="flex flex-wrap gap-8 pt-8 border-t border-white/10">
+            <div className="flex flex-wrap gap-6 sm:gap-8 pt-6 sm:pt-8 border-t border-white/10">
               <div>
                 <p className="text-3xl font-bold text-white">10,000+</p>
                 <p className="text-sm text-white/60">Interpreters Trained</p>
