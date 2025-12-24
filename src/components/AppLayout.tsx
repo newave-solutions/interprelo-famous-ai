@@ -26,7 +26,7 @@ const AppLayout: React.FC = () => {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [hasCompletedBaseline, setHasCompletedBaseline] = useState(false);
 
-  const { user, loading, refreshProgress } = useAuth();
+  const { user, loading: _loading, refreshProgress } = useAuth();
 
   // Refs for scrolling
   const dashboardRef = useRef<HTMLDivElement>(null);

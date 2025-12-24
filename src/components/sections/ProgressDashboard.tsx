@@ -17,7 +17,7 @@ const ProgressDashboard: React.FC = () => {
   const { user, progress: authProgress } = useAuth();
   const [earnedBadgeIds, setEarnedBadgeIds] = useState<string[]>([]);
   const [weeklyProgress, setWeeklyProgress] = useState<WeeklyData[]>(defaultProgress.weeklyProgress);
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
 
   // Use auth progress if available, otherwise use defaults
   const totalSessions = authProgress?.total_sessions ?? defaultProgress.totalSessions;

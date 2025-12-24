@@ -22,11 +22,6 @@ const AISettingsModal: React.FC<AISettingsModalProps> = ({ isOpen, onClose }) =>
     onClose();
   };
 
-  const maskApiKey = (key: string): string => {
-    if (!key || key.length < 8) return key;
-    return key.slice(0, 4) + '•'.repeat(20) + key.slice(-4);
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">

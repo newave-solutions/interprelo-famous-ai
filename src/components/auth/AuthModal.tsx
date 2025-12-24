@@ -60,7 +60,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
           setSuccess('Password reset email sent! Check your inbox.');
         }
       }
-    } catch (err) {
+    } catch (_err) {
       setError('An unexpected error occurred');
     }
 
@@ -79,7 +79,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
       if (error) {
         setError(error.message);
       }
-    } catch (err) {
+    } catch (_err) {
       setError('An unexpected error occurred');
     }
 

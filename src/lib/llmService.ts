@@ -262,7 +262,7 @@ Remember: You are NOT the interpreter. You are the ${context.currentRole} speaki
 
   private async analyzeEmotionalTone(
     response: string,
-    context: ScenarioContext
+    _context: ScenarioContext
   ): Promise<EmotionalTone> {
     // Simple keyword-based emotion detection
     // In production, you'd use a dedicated sentiment analysis API or model
