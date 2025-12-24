@@ -168,7 +168,7 @@ The stricter linting rules are now part of the standard `npm run lint` command. 
 ```json
 {
   "devDependencies": {
-    "cssnano": "^7.0.6"
+    "cssnano": "^7.1.2"
   }
 }
 ```
