@@ -1,7 +1,8 @@
-export default {
+export default (ctx) => ({
   plugins: {
     tailwindcss: {},
     autoprefixer: {},
-    ...(process.env.NODE_ENV === 'production' ? { cssnano: {} } : {}),
+    // Apply cssnano only in production builds
+    ...(ctx.env === 'production' ? { cssnano: { preset: 'default' } } : {}),
   },
-}
+})
