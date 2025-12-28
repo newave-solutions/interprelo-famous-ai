@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Mic, MicOff, Check, ChevronRight, RefreshCw, Volume2 } from 'lucide-react';
-import { toneDrills, ToneDrill } from '../../data/appData';
+import { toneDrills } from '../../data/appData';
 import WaveformVisualizer from '../ui/WaveformVisualizer';
 import ProgressRing from '../ui/ProgressRing';
 

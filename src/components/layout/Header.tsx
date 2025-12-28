@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, Mic, BookOpen, Trophy, Users, Settings, Bell, User, LogIn, LogOut } from 'lucide-react';
+import { Menu, X, Mic, BookOpen, Trophy, Users, Settings, Bell, LogIn, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface HeaderProps {

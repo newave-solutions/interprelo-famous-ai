@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
-  Mic, MicOff, Volume2, VolumeX, MessageSquare, Send, 
-  Settings, Play, Pause, RotateCcw, Sparkles, Brain,
-  TrendingUp, AlertCircle, CheckCircle, Info
+  Mic, MicOff, Volume2, Send, 
+  RotateCcw, Sparkles, Brain,
+  AlertCircle, Info
 } from 'lucide-react';
 import { LLMService, ScenarioContext, LLMMessage, CoachingFeedback, EmotionalTone } from '@/lib/llmService';
 import { SpeechService, TranscriptResult } from '@/lib/speechService';
